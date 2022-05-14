@@ -34,3 +34,4 @@ build/
 /mvnw.cmd
 /mvnw
 /.mvn/
+/src/script/node_modules/
