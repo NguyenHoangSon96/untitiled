@@ -1,11 +1,17 @@
 package com.example.controllers;
 
 import com.example.dto.WordDTO;
+import com.example.entities.Word;
 import com.example.services.ElService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
+@CrossOrigin
 @RequestMapping("/el")
 public class ElController {
 
@@ -16,11 +22,13 @@ public class ElController {
         this.elService = elService;
     }
 
-    @CrossOrigin
     @PostMapping("/add-word")
-    public String addWord(@RequestBody WordDTO wordDTO) throws Exception {
-        elService.addWord(wordDTO);
-        elService.checkWord(wordDTO);
-        return "ok";
+    public ResponseEntity<WordDTO> addWord(@RequestBody WordDTO wordDTO) throws Exception {
+        return new ResponseEntity(elService.addWord(wordDTO), HttpStatus.OK);
+    }
+
+    @GetMapping("/find-randoms")
+    public ResponseEntity<List<Word>> findRandoms() {
+        return new ResponseEntity(elService.findRandoms(), HttpStatus.OK);
     }
 }

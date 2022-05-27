@@ -6,8 +6,9 @@ import com.example.repositories.WordRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
-import java.lang.reflect.Field;
+import java.util.List;
 
 @Service
 public class ElService {
@@ -19,22 +20,25 @@ public class ElService {
         this.wordRepository = wordRepository;
     }
 
-    public void addWord(WordDTO wordDTO) throws Exception {
+    public Word addWord(WordDTO wordDTO) throws Exception {
+        if (wordRepository.findFirstByCode(wordDTO.code).isPresent()) {
+            throw new Exception("Word is duplicated");
+        }
         var word = new Word();
         BeanUtils.copyProperties(wordDTO, word);
-        wordRepository.save(word);
+        word.status = false;
+        word.code = wordDTO.noun + wordDTO.verb + wordDTO.adjective + wordDTO.adverb;
+        return wordRepository.save(word);
     }
 
-    public void checkWord(WordDTO wordDTO) throws IllegalAccessException {
-        Field[] fields = wordDTO.getClass().getDeclaredFields();
-        for (Field field : fields) {
-//            System.out.println(field.getName());
-//            System.out.println(field.get(wordDTO));
-            if (field.get(wordDTO) == "" || field.get(wordDTO) == null) {
-                System.out.println(field.getName());
-            } else {
-                System.out.println(field.get(wordDTO));
-            }
+    public List<Word> findRandoms() {
+        var words = wordRepository.find10WordsByStatus(false);
+        if (!CollectionUtils.isEmpty(words)) {
+            if (words.size() < 10) wordRepository.updateStatusAll(true);
+            return words;
+        } else {
+            wordRepository.updateStatusAll(true);
+            return wordRepository.find10WordsByStatus(false);
         }
     }
 

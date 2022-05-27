@@ -11,8 +11,11 @@ import java.util.Date;
 public class Word extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "word_id")
-    public Long wordId;
+    @Column(name = "id")
+    public Long id;
+
+    @Column(name = "code")
+    public String code;
 
     @Column(name = "noun")
     public String noun;
@@ -26,4 +29,6 @@ public class Word extends BaseEntity {
     @Column(name = "adverb")
     public String adverb;
 
+    @Column(name = "status")
+    public Boolean status;
 }
